@@ -2,14 +2,19 @@ import { useEffect, useState } from 'react'
 import styles from './App.module.css'
 import Search from './components/Search/Search'
 import Sort from './components/Sort/Sort'
+import { useOutsideClick } from './hooks/useOutsideClick'
 
 function App() {
   const [users, setUsers] = useState([])
   const [sortedUsers, setSortedUsers] = useState([])
-  const [inputValue, setInputValue] = useState('')
   const [filterOption, setFilterOption] = useState('lastName')
+  const [inputValue, setInputValue] = useState('')
   const [sortOption, setSortOption] = useState('default')
   const [sortDirectionOption, setSortDirectionOption] = useState('default')
+  const [currentUser, setCurrentUser] = useState({})
+  const [openPopup, setOpenPopup] = useState(false)
+
+  const ref = useOutsideClick(handleClickOutside)
 
   useEffect(() => {
     getUsers()
@@ -29,20 +34,26 @@ function App() {
     }, 500)
 
     return () => clearTimeout(timeOutId)
-  }, [inputValue])
+  }, [inputValue, filterOption])
 
   useEffect(() => {
-    if (sortDirectionOption === 'default') {
+    if (sortOption === 'default' || sortDirectionOption === 'default') {
       setSortedUsers(users)
       return
     }
 
     const sortedUsers = users.toSorted((a, b) => {
+      if (sortOption === 'address') {
+        if (sortDirectionOption === 'По возрастанию') {
+          return a[sortOption]['city'] > b[sortOption]['city'] ? 1 : -1
+        }
+        return b[sortOption]['city'] > a[sortOption]['city'] ? 1 : -1
+      }
+
       if (sortDirectionOption === 'По возрастанию') {
         return a[sortOption] > b[sortOption] ? 1 : -1
-      } else {
-        return b[sortOption] > a[sortOption] ? 1 : -1
       }
+      return b[sortOption] > a[sortOption] ? 1 : -1
     })
 
     setSortedUsers(sortedUsers)
@@ -76,8 +87,40 @@ function App() {
     setSortDirectionOption(e.target.value)
   }
 
+  function handleClickOutside() {
+    setOpenPopup(false)
+  }
+
   return (
     <main className={styles.main}>
+      {openPopup && (
+        <div className={styles.popup}>
+          <div className={styles.card} ref={ref}>
+            <h3>{`${currentUser.lastName} ${currentUser.firstName} ${currentUser.maidenName}`}</h3>
+            <ul className={styles.list}>
+              <li>
+                <span>Возраст:</span> {currentUser.age}
+              </li>
+              <li>
+                <span>Адрес:</span> {`${currentUser.address.city}, ${currentUser.address.address}`}
+              </li>
+              <li>
+                <span>Рост:</span> {currentUser.height}
+              </li>
+              <li>
+                <span>Вес:</span> {currentUser.weight}
+              </li>
+              <li>
+                <span>Номер телефона:</span> {currentUser.phone}
+              </li>
+              <li>
+                <span>Email:</span> {currentUser.email}
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
+
       <header className={styles.header}>
         <Search inputValue={inputValue} handleInputChange={handleInputChange} handleFilterChange={handleFilterChange} />
         <Sort handleSortChange={handleSortChange} handleSortDirectionChange={handleSortDirectionChange} />
@@ -97,7 +140,13 @@ function App() {
         <tbody>
           {sortedUsers &&
             sortedUsers.map((u) => (
-              <tr key={u.id}>
+              <tr
+                key={u.id}
+                onClick={() => {
+                  setCurrentUser(u)
+                  setOpenPopup(true)
+                }}
+              >
                 <td>{`${u.lastName} ${u.firstName} ${u.maidenName}`}</td>
                 <td>{u.age}</td>
                 <td>{u.gender}</td>

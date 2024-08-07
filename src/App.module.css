@@ -1,3 +1,8 @@
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .header {
   margin-top: 30px;
   display: flex;
@@ -49,6 +54,7 @@
 
   & td {
     padding: 5px 10px;
+    cursor: zoom-in;
   }
 
   & th,
@@ -56,9 +62,67 @@
     border: 1px solid var(--color-gray);
     min-width: 50px;
   }
+
+  & th {
+    resize: horizontal;
+    overflow: hidden;
+  }
 }
 
-.main {
-  max-width: 1200px;
-  margin: 0 auto;
+.popup {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+
+  & .card {
+    margin: auto;
+    /* width: 50%; */
+    /* height: 50%; */
+    border: 1px solid var(--color-gray);
+    background-color: #fff;
+    padding: 40px;
+    font-size: 20px;
+
+    animation: slideDown 0.25s ease-out;
+
+    & .list {
+      margin-top: 20px;
+
+      display: flex;
+      flex-direction: column;
+
+      border: 1px solid var(--color-gray);
+
+      & li {
+        padding: 10px 15px;
+      }
+
+      & li:not(:last-of-type) {
+        border-bottom: 1px solid var(--color-gray);
+      }
+
+      & li:nth-of-type(even) {
+        background-color: var(--color-lightgray);
+      }
+    }
+  }
+
+  &.active {
+    display: block;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
 }
