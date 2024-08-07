@@ -1,0 +1,11 @@
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+& .select {
+  border: 1px solid var(--color-gray);
+  padding: 5px;
+  height: 40px;
+}
