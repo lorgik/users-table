@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import styles from './App.module.css'
 import Search from './components/Search/Search'
 import Sort from './components/Sort/Sort'
-import { useOutsideClick } from './hooks/useOutsideClick'
+import Popup from './components/Popup/Popup'
 
 function App() {
   const [users, setUsers] = useState([])
@@ -13,8 +13,7 @@ function App() {
   const [sortDirectionOption, setSortDirectionOption] = useState('default')
   const [currentUser, setCurrentUser] = useState({})
   const [openPopup, setOpenPopup] = useState(false)
-
-  const ref = useOutsideClick(handleClickOutside)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     getUsers()
@@ -23,6 +22,16 @@ function App() {
   useEffect(() => {
     setSortedUsers(users)
   }, [users])
+
+  useEffect(() => {
+    const body = document.querySelector('body')
+
+    if (openPopup) {
+      body.classList.add('blocked')
+    } else {
+      body.classList.remove('blocked')
+    }
+  }, [openPopup])
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -63,12 +72,14 @@ function App() {
     fetch('https://dummyjson.com/users')
       .then((res) => res.json())
       .then((data) => setUsers(data.users))
+      .catch((e) => setError(e.message))
   }
 
   function getFilteredUsers() {
     fetch(`https://dummyjson.com/users/filter?key=${filterOption}&value=${encodeURIComponent(inputValue)}`)
       .then((res) => res.json())
       .then((data) => setUsers(data.users))
+      .catch((e) => setError(e.message))
   }
 
   function handleInputChange(e) {
@@ -93,39 +104,13 @@ function App() {
 
   return (
     <main className={styles.main}>
-      {openPopup && (
-        <div className={styles.popup}>
-          <div className={styles.card} ref={ref}>
-            <h3>{`${currentUser.lastName} ${currentUser.firstName} ${currentUser.maidenName}`}</h3>
-            <ul className={styles.list}>
-              <li>
-                <span>Возраст:</span> {currentUser.age}
-              </li>
-              <li>
-                <span>Адрес:</span> {`${currentUser.address.city}, ${currentUser.address.address}`}
-              </li>
-              <li>
-                <span>Рост:</span> {currentUser.height}
-              </li>
-              <li>
-                <span>Вес:</span> {currentUser.weight}
-              </li>
-              <li>
-                <span>Номер телефона:</span> {currentUser.phone}
-              </li>
-              <li>
-                <span>Email:</span> {currentUser.email}
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
+      {openPopup && <Popup handleClickOutside={handleClickOutside} currentUser={currentUser} />}
 
       <header className={styles.header}>
         <Search inputValue={inputValue} handleInputChange={handleInputChange} handleFilterChange={handleFilterChange} />
         <Sort handleSortChange={handleSortChange} handleSortDirectionChange={handleSortDirectionChange} />
       </header>
-
+      {error && <div className={styles.error}>{error}</div>}
       <table className={styles.table}>
         {/* <caption>Информация о пользователях</caption> */}
         <thead>

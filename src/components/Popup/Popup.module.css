@@ -1,0 +1,49 @@
+.popup {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.3);
+
+  & .card {
+    margin: auto;
+    /* border: 1px solid var(--color-gray); */
+    background-color: var(--color-white);
+    border-radius: 30px;
+
+    padding: 40px;
+    font-size: 20px;
+
+    animation: slideDown 0.2s ease-out;
+
+    & .list {
+      margin-top: 20px;
+
+      display: flex;
+      flex-direction: column;
+
+      /* border: 1px solid var(--color-gray); */
+
+      & li {
+        padding: 15px 0px;
+      }
+
+      & li {
+        border-top: 1px solid var(--color-black);
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}

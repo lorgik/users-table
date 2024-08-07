@@ -14,6 +14,7 @@ function Search({ inputValue, handleInputChange, handleFilterChange }) {
         <option value="phone">Номер телефона</option>
         <option value="address.city">Город</option>
         <option value="address.address">Улица</option>
+        <option value="error">Выдать ошибку</option>
       </select>
       <input
         className={styles.input}

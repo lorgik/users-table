@@ -9,9 +9,7 @@ const useOutsideClick = (callback) => {
         callback()
       }
     }
-
     document.addEventListener('click', handleClick, true)
-
     return () => {
       document.removeEventListener('click', handleClick, true)
     }

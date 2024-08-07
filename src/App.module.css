@@ -16,30 +16,27 @@
   }
 }
 
-.search,
-.sort {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-& .input,
-.select {
-  border: 1px solid var(--color-gray);
-  padding: 5px;
-  height: 40px;
-}
-
 .table {
   margin-top: 30px;
   margin-bottom: 30px;
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid var(--color-gray);
+  overflow: hidden;
+  /* border: 1px solid var(--color-gray); */
+  border-radius: 20px;
   text-align: left;
+  background-color: var(--color-white);
 
   & tbody tr:nth-child(even) {
     background-color: var(--color-lightgray);
+  }
+
+  & tbody tr {
+    transition: all 0.05s ease-out;
+  }
+
+  & tbody tr:hover {
+    background-color: #e9f7ff;
   }
 
   & caption {
@@ -49,17 +46,27 @@
   }
 
   & th {
-    padding: 10px;
+    padding: 10px 15px;
+    background-color: #bce7ff;
   }
 
   & td {
-    padding: 5px 10px;
-    cursor: zoom-in;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+
+  & th:not(:last-of-type),
+  td:not(:last-of-type) {
+    border-right: 1px solid var(--color-gray);
+  }
+
+  & tr:not(:last-of-type) td,
+  & tr th {
+    border-bottom: 1px solid var(--color-gray);
   }
 
   & th,
   td {
-    border: 1px solid var(--color-gray);
     min-width: 50px;
   }
 
@@ -69,60 +76,15 @@
   }
 }
 
-.popup {
-  position: fixed;
-  top: 0;
+.error {
+  position: absolute;
+  top: 30px;
   right: 0;
-  bottom: 0;
   left: 0;
-  display: flex;
-  align-items: center;
+  background-color: var(--color-white);
+  width: 50%;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid red;
   margin: auto;
-  background-color: rgba(0, 0, 0, 0.2);
-
-  & .card {
-    margin: auto;
-    /* width: 50%; */
-    /* height: 50%; */
-    border: 1px solid var(--color-gray);
-    background-color: #fff;
-    padding: 40px;
-    font-size: 20px;
-
-    animation: slideDown 0.25s ease-out;
-
-    & .list {
-      margin-top: 20px;
-
-      display: flex;
-      flex-direction: column;
-
-      border: 1px solid var(--color-gray);
-
-      & li {
-        padding: 10px 15px;
-      }
-
-      & li:not(:last-of-type) {
-        border-bottom: 1px solid var(--color-gray);
-      }
-
-      & li:nth-of-type(even) {
-        background-color: var(--color-lightgray);
-      }
-    }
-  }
-
-  &.active {
-    display: block;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0%);
-  }
 }
