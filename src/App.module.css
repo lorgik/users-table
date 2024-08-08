@@ -22,7 +22,6 @@
   width: 100%;
   border-collapse: collapse;
   overflow: hidden;
-  /* border: 1px solid var(--color-gray); */
   border-radius: 20px;
   text-align: left;
   background-color: var(--color-white);
@@ -36,7 +35,7 @@
   }
 
   & tbody tr:hover {
-    background-color: #e9f7ff;
+    background-color: #fff5e9;
   }
 
   & caption {
@@ -47,7 +46,7 @@
 
   & th {
     padding: 10px 15px;
-    background-color: #bce7ff;
+    background-color: #ffd6bc;
   }
 
   & td {
@@ -70,21 +69,47 @@
     min-width: 50px;
   }
 
-  & th {
+  & th:not(:last-of-type) {
     resize: horizontal;
     overflow: hidden;
   }
 }
 
 .error {
-  position: absolute;
-  top: 30px;
+  position: fixed;
+  top: 15px;
   right: 0;
   left: 0;
   background-color: var(--color-white);
-  width: 50%;
+  width: max-content;
   padding: 20px;
   text-align: center;
-  border: 1px solid red;
+  background-color: var(--color-red);
+  color: var(--color-white);
+  border-radius: 15px;
   margin: auto;
+
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+.button {
+  background-color: var(--color-white);
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition: all 0.05s ease-out;
+
+  &:hover {
+    outline: 2px solid var(--color-red);
+  }
 }

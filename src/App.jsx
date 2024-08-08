@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import styles from './App.module.css'
-import Search from './components/Search/Search'
-import Sort from './components/Sort/Sort'
-import Popup from './components/Popup/Popup'
+import Search from '@components/Search/Search'
+import Sort from '@components/Sort/Sort'
+import Popup from '@components/Popup/Popup'
 
 function App() {
   const [users, setUsers] = useState([])
@@ -72,14 +72,20 @@ function App() {
     fetch('https://dummyjson.com/users')
       .then((res) => res.json())
       .then((data) => setUsers(data.users))
-      .catch((e) => setError(e.message))
+      .catch((e) => {
+        setError(e.message)
+        setTimeout(() => setError(''), 5000)
+      })
   }
 
   function getFilteredUsers() {
     fetch(`https://dummyjson.com/users/filter?key=${filterOption}&value=${encodeURIComponent(inputValue)}`)
       .then((res) => res.json())
       .then((data) => setUsers(data.users))
-      .catch((e) => setError(e.message))
+      .catch((e) => {
+        setError(e.message)
+        setTimeout(() => setError(''), 5000)
+      })
   }
 
   function handleInputChange(e) {
@@ -102,12 +108,25 @@ function App() {
     setOpenPopup(false)
   }
 
+  function triggerError() {
+    fetch('https://dummyjson.com/error')
+      .then((res) => res.json())
+      .then((data) => setUsers(data.users))
+      .catch((e) => {
+        setError(e.message)
+        setTimeout(() => setError(''), 5000)
+      })
+  }
+
   return (
     <main className={styles.main}>
       {openPopup && <Popup handleClickOutside={handleClickOutside} currentUser={currentUser} />}
 
       <header className={styles.header}>
         <Search inputValue={inputValue} handleInputChange={handleInputChange} handleFilterChange={handleFilterChange} />
+        <button className={styles.button} onClick={triggerError}>
+          Выдать ошибку
+        </button>
         <Sort handleSortChange={handleSortChange} handleSortDirectionChange={handleSortDirectionChange} />
       </header>
       {error && <div className={styles.error}>{error}</div>}

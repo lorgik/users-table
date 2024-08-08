@@ -11,22 +11,19 @@
 
   & .card {
     margin: auto;
-    /* border: 1px solid var(--color-gray); */
     background-color: var(--color-white);
-    border-radius: 30px;
+    border-radius: 40px;
 
     padding: 40px;
     font-size: 20px;
 
-    animation: slideDown 0.2s ease-out;
+    animation: slideUp 0.2s ease-out;
 
     & .list {
       margin-top: 20px;
 
       display: flex;
       flex-direction: column;
-
-      /* border: 1px solid var(--color-gray); */
 
       & li {
         padding: 15px 0px;
@@ -39,7 +36,7 @@
   }
 }
 
-@keyframes slideDown {
+@keyframes slideUp {
   from {
     transform: translateY(100%);
   }

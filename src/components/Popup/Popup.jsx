@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './Popup.module.css'
-import { useOutsideClick } from '../../hooks/useOutsideClick'
+import { useOutsideClick } from '@hooks/useOutsideClick'
 
 function Popup({ handleClickOutside, currentUser }) {
   const ref = useOutsideClick(handleClickOutside)

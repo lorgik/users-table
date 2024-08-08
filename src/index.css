@@ -3,6 +3,7 @@
   --color-white: #ffffff;
   --color-gray: #d3d3d3;
   --color-lightgray: #f1f1f1;
+  --color-red: #f60716;
 }
 
 * {
@@ -24,7 +25,8 @@ body {
 }
 
 input,
-select {
+select,
+button {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
