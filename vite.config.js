@@ -4,6 +4,7 @@ import * as path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/users-table',
   plugins: [react()],
   resolve: {
     alias: {
@@ -13,5 +14,4 @@ export default defineConfig({
       '@hooks': path.resolve(__dirname, './src/hooks'),
     },
   },
-  base: '/users-table/',
 })
