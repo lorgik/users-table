@@ -34,8 +34,8 @@
     transition: all 0.05s ease-out;
   }
 
-  & tbody tr:hover {
-    background-color: #fff5e9;
+  & tbody tr:not(.notification):hover {
+    background-color: var(--color-lightpurple);
   }
 
   & caption {
@@ -45,12 +45,16 @@
   }
 
   & th {
-    padding: 10px 15px;
-    background-color: #ffd6bc;
+    padding: 15px 15px;
+    background-color: var(--color-blue);
+    color: var(--color-white);
   }
 
   & td {
     padding: 10px 15px;
+  }
+
+  & tr:not(.notification) td {
     cursor: pointer;
   }
 

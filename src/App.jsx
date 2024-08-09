@@ -16,7 +16,10 @@ function App() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    getUsers()
+    getUsers().catch((e) => {
+      setError(e.message)
+      setTimeout(() => setError(''), 5000)
+    })
   }, [])
 
   useEffect(() => {
@@ -36,9 +39,15 @@ function App() {
   useEffect(() => {
     const timeOutId = setTimeout(() => {
       if (inputValue === '') {
-        getUsers()
+        getUsers().catch((e) => {
+          setError(e.message)
+          setTimeout(() => setError(''), 5000)
+        })
       } else {
-        getFilteredUsers()
+        getFilteredUsers().catch((e) => {
+          setError(e.message)
+          setTimeout(() => setError(''), 5000)
+        })
       }
     }, 500)
 
@@ -69,23 +78,15 @@ function App() {
   }, [sortOption, sortDirectionOption])
 
   function getUsers() {
-    fetch('https://dummyjson.com/users')
+    return fetch('https://dummyjson.com/users')
       .then((res) => res.json())
       .then((data) => setUsers(data.users))
-      .catch((e) => {
-        setError(e.message)
-        setTimeout(() => setError(''), 5000)
-      })
   }
 
   function getFilteredUsers() {
-    fetch(`https://dummyjson.com/users/filter?key=${filterOption}&value=${encodeURIComponent(inputValue)}`)
+    return fetch(`https://dummyjson.com/users/filter?key=${filterOption}&value=${encodeURIComponent(inputValue)}`)
       .then((res) => res.json())
       .then((data) => setUsers(data.users))
-      .catch((e) => {
-        setError(e.message)
-        setTimeout(() => setError(''), 5000)
-      })
   }
 
   function handleInputChange(e) {
@@ -109,13 +110,9 @@ function App() {
   }
 
   function triggerError() {
-    fetch('https://dummyjson.com/error')
+    return fetch('https://dummyjson.com/error')
       .then((res) => res.json())
       .then((data) => setUsers(data.users))
-      .catch((e) => {
-        setError(e.message)
-        setTimeout(() => setError(''), 5000)
-      })
   }
 
   return (
@@ -124,7 +121,15 @@ function App() {
 
       <header className={styles.header}>
         <Search inputValue={inputValue} handleInputChange={handleInputChange} handleFilterChange={handleFilterChange} />
-        <button className={styles.button} onClick={triggerError}>
+        <button
+          className={styles.button}
+          onClick={() => {
+            triggerError().catch((e) => {
+              setError(e.message)
+              setTimeout(() => setError(''), 5000)
+            })
+          }}
+        >
           Выдать ошибку
         </button>
         <Sort handleSortChange={handleSortChange} handleSortDirectionChange={handleSortDirectionChange} />
@@ -142,7 +147,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {sortedUsers &&
+          {sortedUsers.length !== 0 ? (
             sortedUsers.map((u) => (
               <tr
                 key={u.id}
@@ -157,7 +162,12 @@ function App() {
                 <td>{u.phone}</td>
                 <td>{`${u.address.city}, ${u.address.address}`}</td>
               </tr>
-            ))}
+            ))
+          ) : (
+            <tr className={styles.notification}>
+              <td>Пользователи не найдены</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </main>
