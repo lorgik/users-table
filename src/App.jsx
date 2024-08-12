@@ -1,25 +1,61 @@
 import { useEffect, useState } from 'react'
 import styles from './App.module.css'
-import Search from '@components/Search/Search'
-import Sort from '@components/Sort/Sort'
 import Popup from '@components/Popup/Popup'
+import Select from '@components/Select/Select'
+import Input from '@components/Input/Input'
+import { getError } from './api/users'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchFilteredUsers, fetchUsers } from './slices/usersSlice'
+
+const searchOptions = [
+  { value: 'lastname', label: 'Фамилия' },
+  { value: 'firstName', label: 'Имя' },
+  { value: 'maidenName', label: 'Отчество' },
+  { value: 'age', label: 'Возраст' },
+  { value: 'gender', label: 'Пол' },
+  { value: 'phone', label: 'Номер телефона' },
+  { value: 'address.city', label: 'Город' },
+  { value: 'address.address', label: 'Улица' },
+]
+
+const sortOptions = [
+  { value: 'default', label: 'По умолчанию' },
+  { value: 'lastName', label: 'ФИО' },
+  { value: 'age', label: 'Возраст' },
+  { value: 'gender', label: 'Пол' },
+  { value: 'address', label: 'Адрес' },
+]
+const sortDirectionOptions = [
+  { value: 'default', label: 'По умолчанию' },
+  { value: 'По возрастанию', label: 'По возрастанию' },
+  { value: 'По убыванию', label: 'По убыванию' },
+]
 
 function App() {
-  const [users, setUsers] = useState([])
+  // const [users, setUsers] = useState([])
   const [sortedUsers, setSortedUsers] = useState([])
-  const [filterOption, setFilterOption] = useState('lastName')
+  const [currentUser, setCurrentUser] = useState({})
   const [inputValue, setInputValue] = useState('')
+  const [filterOption, setFilterOption] = useState('lastName')
   const [sortOption, setSortOption] = useState('default')
   const [sortDirectionOption, setSortDirectionOption] = useState('default')
-  const [currentUser, setCurrentUser] = useState({})
   const [openPopup, setOpenPopup] = useState(false)
   const [error, setError] = useState('')
 
+  const users = useSelector((state) => state.users.users)
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    getUsers().catch((e) => {
-      setError(e.message)
-      setTimeout(() => setError(''), 5000)
-    })
+    function load() {
+      try {
+        dispatch(fetchUsers())
+      } catch (e) {
+        setError(e.message)
+        setTimeout(() => setError(''), 5000)
+      }
+    }
+
+    load()
   }, [])
 
   useEffect(() => {
@@ -37,17 +73,21 @@ function App() {
   }, [openPopup])
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
+    const timeOutId = setTimeout(async () => {
       if (inputValue === '') {
-        getUsers().catch((e) => {
+        try {
+          dispatch(fetchUsers())
+        } catch (e) {
           setError(e.message)
           setTimeout(() => setError(''), 5000)
-        })
+        }
       } else {
-        getFilteredUsers().catch((e) => {
+        try {
+          dispatch(fetchFilteredUsers({ filterOption, inputValue }))
+        } catch (e) {
           setError(e.message)
           setTimeout(() => setError(''), 5000)
-        })
+        }
       }
     }, 500)
 
@@ -77,66 +117,41 @@ function App() {
     setSortedUsers(sortedUsers)
   }, [sortOption, sortDirectionOption])
 
-  function getUsers() {
-    return fetch('https://dummyjson.com/users')
-      .then((res) => res.json())
-      .then((data) => setUsers(data.users))
-  }
-
-  function getFilteredUsers() {
-    return fetch(`https://dummyjson.com/users/filter?key=${filterOption}&value=${encodeURIComponent(inputValue)}`)
-      .then((res) => res.json())
-      .then((data) => setUsers(data.users))
-  }
-
-  function handleInputChange(e) {
-    setInputValue(e.target.value)
-  }
-
-  function handleFilterChange(e) {
-    setFilterOption(e.target.value)
-  }
-
-  function handleSortChange(e) {
-    setSortOption(e.target.value)
-  }
-
-  function handleSortDirectionChange(e) {
-    setSortDirectionOption(e.target.value)
-  }
-
-  function handleClickOutside() {
-    setOpenPopup(false)
-  }
-
-  function triggerError() {
-    return fetch('https://dummyjson.com/error')
-      .then((res) => res.json())
-      .then((data) => setUsers(data.users))
-  }
-
   return (
     <main className={styles.main}>
-      {openPopup && <Popup handleClickOutside={handleClickOutside} currentUser={currentUser} />}
+      {openPopup && <Popup handleClickOutside={() => setOpenPopup(false)} currentUser={currentUser} />}
+
+      {error && <div className={styles.error}>{error}</div>}
 
       <header className={styles.header}>
-        <Search inputValue={inputValue} handleInputChange={handleInputChange} handleFilterChange={handleFilterChange} />
+        <div className={styles.search}>
+          <span>Поиск по</span>
+          <Select options={searchOptions} handleChange={(e) => setFilterOption(e.target.value)} />
+          <Input value={inputValue} handleChange={(e) => setInputValue(e.target.value)} placeholder="Писать сюда" />
+        </div>
+
         <button
           className={styles.button}
-          onClick={() => {
-            triggerError().catch((e) => {
+          onClick={async () => {
+            try {
+              await getError()
+            } catch (e) {
               setError(e.message)
               setTimeout(() => setError(''), 5000)
-            })
+            }
           }}
         >
-          Выдать ошибку
+          Вызвать ошибку
         </button>
-        <Sort handleSortChange={handleSortChange} handleSortDirectionChange={handleSortDirectionChange} />
+
+        <div className={styles.sort}>
+          <span>Сортировка по</span>
+          <Select options={sortOptions} handleChange={(e) => setSortOption(e.target.value)} />
+          <Select options={sortDirectionOptions} handleChange={(e) => setSortDirectionOption(e.target.value)} />
+        </div>
       </header>
-      {error && <div className={styles.error}>{error}</div>}
+
       <table className={styles.table}>
-        {/* <caption>Информация о пользователях</caption> */}
         <thead>
           <tr>
             <th>ФИО</th>

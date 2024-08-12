@@ -1,14 +1,8 @@
-.sort {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.select {
+.input {
   padding: 5px;
+  padding-left: 10px;
   height: 40px;
   border-radius: 10px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
-  background-color: var(--color-white);
 }

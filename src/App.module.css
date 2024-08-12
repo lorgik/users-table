@@ -117,3 +117,15 @@
     outline: 2px solid var(--color-red);
   }
 }
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
